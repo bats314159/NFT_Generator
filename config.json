@@ -1,0 +1,67 @@
+{
+  "collection": {
+    "name": "My NFT Collection",
+    "description": "A unique collection of procedurally generated NFTs.",
+    "symbol": "MNC",
+    "size": 10,
+    "baseUri": "ipfs://REPLACE_WITH_METADATA_CID/",
+    "royaltyBps": 500,
+    "royaltyReceiver": "0x0000000000000000000000000000000000000000"
+  },
+  "image": {
+    "width": 512,
+    "height": 512,
+    "format": "PNG"
+  },
+  "layers": [
+    {
+      "name": "Background",
+      "required": true,
+      "traits": [
+        { "name": "Blue",   "weight": 30, "file": "blue.png" },
+        { "name": "Green",  "weight": 25, "file": "green.png" },
+        { "name": "Red",    "weight": 20, "file": "red.png" },
+        { "name": "Yellow", "weight": 15, "file": "yellow.png" },
+        { "name": "Purple", "weight": 10, "file": "purple.png" }
+      ]
+    },
+    {
+      "name": "Body",
+      "required": true,
+      "traits": [
+        { "name": "Circle",   "weight": 40, "file": "circle.png" },
+        { "name": "Square",   "weight": 35, "file": "square.png" },
+        { "name": "Triangle", "weight": 25, "file": "triangle.png" }
+      ]
+    },
+    {
+      "name": "Eyes",
+      "required": true,
+      "traits": [
+        { "name": "Round",    "weight": 40, "file": "round.png" },
+        { "name": "Star",     "weight": 30, "file": "star.png" },
+        { "name": "Diamond",  "weight": 20, "file": "diamond.png" },
+        { "name": "Laser",    "weight": 10, "file": "laser.png" }
+      ]
+    },
+    {
+      "name": "Accessory",
+      "required": false,
+      "noneWeight": 30,
+      "traits": [
+        { "name": "Hat",    "weight": 35, "file": "hat.png" },
+        { "name": "Crown",  "weight": 20, "file": "crown.png" },
+        { "name": "Halo",   "weight": 15, "file": "halo.png" }
+      ]
+    }
+  ],
+  "network": {
+    "name": "base",
+    "chainId": 8453,
+    "rpcUrl": "https://mainnet.base.org"
+  },
+  "ipfs": {
+    "provider": "pinata",
+    "gateway": "https://gateway.pinata.cloud/ipfs/"
+  }
+}
