@@ -108,7 +108,13 @@ Copy `.env.example` to `.env` and set `PRIVATE_KEY`, `BASE_RPC_URL`, and
 optionally `BASESCAN_API_KEY`.
 
 Update `config.json` → `collection.baseUri` with the metadata CID from step 5,
-then deploy to Base Sepolia (testnet) or Base Mainnet:
+and `collection.contractUri` with the IPFS CID of your
+[collection-level metadata JSON](https://docs.opensea.io/docs/contract-level-metadata)
+(used by OpenSea and other Base marketplaces to display the collection name,
+image, and description).  You can leave `contractUri` blank and call
+`setContractURI()` on the contract later.
+
+Then deploy to Base Sepolia (testnet) or Base Mainnet:
 
 ```bash
 # Testnet
@@ -123,7 +129,7 @@ The contract address is printed and saved to `output/deployment-<network>.json`.
 **Verify on Basescan** (the deploy script prints the exact command):
 
 ```bash
-npx hardhat verify --network base <ADDRESS> "My NFT" "MNC" 10 "ipfs://Qm…/" "0x…" 500
+npx hardhat verify --network base <ADDRESS> "My NFT" "MNC" 10 "ipfs://Qm…/" "0x…" 500 "ipfs://QmContract"
 ```
 
 ---
@@ -144,6 +150,7 @@ pytest tests/ -v
 |---|---|
 | Standard | ERC-721 (OpenZeppelin v5) |
 | Metadata | `baseURI + tokenId + ".json"` |
+| Collection metadata | `contractURI()` (OpenSea / Base marketplace standard) |
 | Royalties | EIP-2981 (configurable bps) |
 | Networks | Base Mainnet (8453), Base Sepolia (84532), any EVM |
 | Supply cap | `MAX_SUPPLY` set at deploy time |

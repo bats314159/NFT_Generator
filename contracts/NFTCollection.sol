@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -31,6 +31,7 @@ contract NFTCollection is ERC721URIStorage, Ownable, IERC2981 {
     // ── State ─────────────────────────────────────────────────────────
     uint256 private _nextTokenId;
     string  private _baseTokenURI;
+    string  private _contractURI;
 
     // EIP-2981 royalty
     address private _royaltyReceiver;
@@ -38,6 +39,7 @@ contract NFTCollection is ERC721URIStorage, Ownable, IERC2981 {
 
     // ── Events ────────────────────────────────────────────────────────
     event BaseURIUpdated(string newBaseURI);
+    event ContractURIUpdated(string newContractURI);
     event RoyaltyUpdated(address receiver, uint96 bps);
 
     // ── Constructor ───────────────────────────────────────────────────
@@ -49,6 +51,9 @@ contract NFTCollection is ERC721URIStorage, Ownable, IERC2981 {
      *                        e.g. "ipfs://Qm…abc/"
      * @param royaltyReceiver Address that receives secondary-sale royalties
      * @param royaltyBps_     Royalty in basis points (100 bps = 1 %)
+     * @param contractURI_    IPFS URI of the collection-level metadata JSON
+     *                        (used by OpenSea and other Base marketplaces).
+     *                        Pass an empty string to set it later via setContractURI().
      */
     constructor(
         string memory name_,
@@ -56,7 +61,8 @@ contract NFTCollection is ERC721URIStorage, Ownable, IERC2981 {
         uint256 maxSupply_,
         string memory baseTokenURI_,
         address royaltyReceiver,
-        uint96  royaltyBps_
+        uint96  royaltyBps_,
+        string memory contractURI_
     ) ERC721(name_, symbol_) Ownable(msg.sender) {
         require(maxSupply_ > 0,        "NFTCollection: max supply must be > 0");
         require(royaltyBps_ <= 10_000, "NFTCollection: royalty bps must be <= 10000");
@@ -66,6 +72,7 @@ contract NFTCollection is ERC721URIStorage, Ownable, IERC2981 {
         _baseTokenURI    = baseTokenURI_;
         _royaltyReceiver = royaltyReceiver;
         _royaltyBps      = royaltyBps_;
+        _contractURI     = contractURI_;
         _nextTokenId     = 1;
     }
 
@@ -117,6 +124,24 @@ contract NFTCollection is ERC721URIStorage, Ownable, IERC2981 {
 
     function baseURI() external view returns (string memory) {
         return _baseTokenURI;
+    }
+
+    /**
+     * @notice Returns the collection-level metadata URI used by OpenSea and
+     *         other Base marketplaces to display collection name, image,
+     *         description, royalties, etc.
+     *         See https://docs.opensea.io/docs/contract-level-metadata
+     */
+    function contractURI() external view returns (string memory) {
+        return _contractURI;
+    }
+
+    /**
+     * @notice Update the collection-level metadata URI.  Only callable by the owner.
+     */
+    function setContractURI(string calldata newContractURI) external onlyOwner {
+        _contractURI = newContractURI;
+        emit ContractURIUpdated(newContractURI);
     }
 
     // ── Supply helpers ────────────────────────────────────────────────
