@@ -5,6 +5,7 @@
     "symbol": "MNC",
     "size": 10,
     "baseUri": "ipfs://REPLACE_WITH_METADATA_CID/",
+    "contractUri": "ipfs://REPLACE_WITH_CONTRACT_METADATA_CID",
     "royaltyBps": 500,
     "royaltyReceiver": "0x0000000000000000000000000000000000000000"
   },

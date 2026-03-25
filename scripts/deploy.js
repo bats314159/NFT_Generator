@@ -36,12 +36,14 @@ async function main() {
     col.royaltyReceiver !== "0x0000000000000000000000000000000000000000"
       ? col.royaltyReceiver
       : deployer.address;
+  const contractURI    = col.contractUri || "";
 
   console.log("\nDeployment parameters:");
   console.log("  Name:            ", name);
   console.log("  Symbol:          ", symbol);
   console.log("  Max supply:      ", maxSupply);
   console.log("  Base URI:        ", baseTokenURI);
+  console.log("  Contract URI:    ", contractURI || "(not set)");
   console.log("  Royalty receiver:", royaltyReceiver);
   console.log("  Royalty bps:     ", royaltyBps, `(${royaltyBps / 100}%)`);
 
@@ -53,7 +55,8 @@ async function main() {
     maxSupply,
     baseTokenURI,
     royaltyReceiver,
-    royaltyBps
+    royaltyBps,
+    contractURI
   );
 
   await contract.waitForDeployment();
@@ -74,6 +77,7 @@ async function main() {
     symbol,
     maxSupply,
     baseTokenURI,
+    contractURI,
     royaltyReceiver,
     royaltyBps,
     deployedAt: new Date().toISOString(),
@@ -89,7 +93,7 @@ async function main() {
   console.log("\nTo verify on Basescan, run:");
   console.log(
     `  npx hardhat verify --network ${network} ${address} ` +
-      `"${name}" "${symbol}" ${maxSupply} "${baseTokenURI}" "${royaltyReceiver}" ${royaltyBps}`
+      `"${name}" "${symbol}" ${maxSupply} "${baseTokenURI}" "${royaltyReceiver}" ${royaltyBps} "${contractURI}"`
   );
 }
 
