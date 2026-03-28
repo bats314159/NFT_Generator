@@ -96,6 +96,18 @@ python -m src.main upload --config config.json --output output/
 
 The resulting IPFS CIDs are printed and saved to `output/cids.json`.
 
+### (Optional) One-step pipeline
+
+Run generate → upload → deploy in a single command:
+
+```bash
+python -m src.main run \
+    --config config.json \
+    --layers layers/ \
+    --output output/ \
+    --network base-sepolia
+```
+
 ### 6 – Deploy the smart contract
 
 Install Node dependencies:
@@ -107,6 +119,21 @@ npm install
 Copy `.env.example` to `.env` and set `PRIVATE_KEY`, `BASE_RPC_URL`, and
 optionally `BASESCAN_API_KEY`.
 
+**Option A – automatic (after running `upload`):**
+
+```bash
+# Deploys to Base Sepolia testnet (reads IPFS CIDs from output/cids.json)
+python -m src.main deploy --config config.json --output output/ --network base-sepolia
+
+# Deploys to Base Mainnet
+python -m src.main deploy --config config.json --output output/ --network base
+```
+
+`deploy` will automatically update `config.json` → `collection.baseUri` with the
+metadata CID saved during upload, then invoke the Hardhat deploy script.
+
+**Option B – manual:**
+
 Update `config.json` → `collection.baseUri` with the metadata CID from step 5,
 and `collection.contractUri` with the IPFS CID of your
 [collection-level metadata JSON](https://docs.opensea.io/docs/contract-level-metadata)
@@ -114,7 +141,7 @@ and `collection.contractUri` with the IPFS CID of your
 image, and description).  You can leave `contractUri` blank and call
 `setContractURI()` on the contract later.
 
-Then deploy to Base Sepolia (testnet) or Base Mainnet:
+Then deploy directly with Hardhat:
 
 ```bash
 # Testnet
