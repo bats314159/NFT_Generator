@@ -62,6 +62,25 @@ def print_err(msg: str) -> None:
     print(f"  ✗ {msg}", file=sys.stderr, flush=True)
 
 
+def update_config_base_uri(config_path: str, metadata_cid: str) -> None:
+    """
+    Update *config_path* in-place, setting ``collection.baseUri`` to the
+    IPFS metadata CID so that the Hardhat deploy script picks it up.
+
+    The URI is formatted as ``ipfs://<metadata_cid>/`` (trailing slash
+    required by the ``tokenURI`` implementation in NFTCollection.sol).
+    """
+    path = Path(config_path)
+    with open(path, encoding="utf-8") as fh:
+        config = json.load(fh)
+
+    config["collection"]["baseUri"] = f"ipfs://{metadata_cid}/"
+
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(config, fh, indent=2)
+        fh.write("\n")
+
+
 def project_root() -> Path:
     """Return the repository root directory (parent of *src/*)."""
     return Path(__file__).parent.parent
