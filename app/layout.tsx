@@ -6,6 +6,7 @@ export const metadata: Metadata = {
     "Generate NFT collections with layer compositing, IPFS upload, and ERC-721 deployment on Base",
   other: {
     "application-name": "NFT Generator",
+    "base:app_id": "nft-generator",
   },
 };
 
