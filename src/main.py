@@ -195,6 +195,29 @@ def cmd_upload(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_poem(args: argparse.Namespace) -> int:
+    """Generate and print random poem(s)."""
+    from src.poetry import PoetryGenerator
+
+    _SEP = "\n\n"
+
+    gen = PoetryGenerator(seed=args.seed)
+    poems: list[str] = []
+    for _ in range(args.count):
+        poems.append(gen.generate(args.form))
+
+    joined = _SEP.join(poems)
+    print(joined)
+
+    if args.output:
+        output_path = Path(args.output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(joined + "\n", encoding="utf-8")
+        print_ok(f"Poem(s) saved to: {args.output}")
+
+    return 0
+
+
 def cmd_run(args: argparse.Namespace) -> int:
     """Generate images + metadata, upload to IPFS, then deploy the contract."""
     rc = cmd_generate(args)
@@ -252,6 +275,32 @@ def build_parser() -> argparse.ArgumentParser:
         help="Hardhat network name to deploy to (default: base-sepolia)",
     )
 
+    # ── poem ──────────────────────────────────────────────────────────────
+    poe = sub.add_parser("poem", help="Generate a random poem.")
+    poe.add_argument(
+        "--form",
+        choices=["haiku", "couplet", "free_verse", "limerick", "random"],
+        default="random",
+        help="Poem form to generate (default: random)",
+    )
+    poe.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Integer seed for reproducible output",
+    )
+    poe.add_argument(
+        "--count",
+        type=int,
+        default=1,
+        help="Number of poems to generate (default: 1)",
+    )
+    poe.add_argument(
+        "--output",
+        default=None,
+        help="Path to also save poem(s) to (poems are always printed to stdout)",
+    )
+
     return root
 
 
@@ -264,6 +313,7 @@ def main(argv: list[str] | None = None) -> int:
         "upload": cmd_upload,
         "deploy": cmd_deploy,
         "run": cmd_run,
+        "poem": cmd_poem,
     }
     return dispatch[args.command](args)
 
