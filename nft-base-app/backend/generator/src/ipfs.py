@@ -129,20 +129,21 @@ class PinataClient:
         if not folder.is_dir():
             raise FileNotFoundError(f"Folder not found: {folder_path}")
 
-        files_to_upload = sorted(folder.iterdir())
-        if not files_to_upload:
+        file_paths = sorted(p for p in folder.iterdir() if p.is_file())
+        if not file_paths:
             raise IPFSUploadError(f"Folder is empty: {folder_path}")
 
-        file_handles = []
-        multipart_files = []
+        # Open all files, build multipart list, then close them in a finally block
+        # so that no handle is leaked on exception during the request.
+        file_handles: list[Any] = []
         try:
-            for file_path in files_to_upload:
-                if file_path.is_file():
-                    fh = open(file_path, "rb")  # noqa: WPS515
-                    file_handles.append(fh)
-                    multipart_files.append(
-                        ("file", (f"{folder.name}/{file_path.name}", fh))
-                    )
+            multipart_files = []
+            for file_path in file_paths:
+                fh = open(file_path, "rb")  # noqa: WPS515
+                file_handles.append(fh)
+                multipart_files.append(
+                    ("file", (f"{folder.name}/{file_path.name}", fh))
+                )
 
             metadata = json.dumps({"name": name})
             resp = requests.post(

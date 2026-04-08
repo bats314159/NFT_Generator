@@ -82,5 +82,10 @@ def update_config_base_uri(config_path: str, metadata_cid: str) -> None:
 
 
 def project_root() -> Path:
-    """Return the repository root directory (parent of *src/*)."""
-    return Path(__file__).parent.parent
+    """Return the repository root (the directory that contains hardhat.config.js)."""
+    here = Path(__file__).resolve()
+    for parent in here.parents:
+        if (parent / "hardhat.config.js").is_file():
+            return parent
+    # Fallback: two levels above this file (original relative position)
+    return here.parent.parent
